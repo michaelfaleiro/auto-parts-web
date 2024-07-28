@@ -1,0 +1,264 @@
+<div class="container-fluid bg-dark-subtle h-100 d-flex flex-column">
+  @if (isModalBuscarProduto){
+  <app-modal-buscar-produto
+    (showModalBuscarProduto)="showModalBuscarProduto()"
+    (produtoSelecionado)="carregarProduto($event)"
+  />
+  }
+  <div class="text-center">
+    <h5>Novo Orçamento</h5>
+  </div>
+  <main class="h-100 d-flex flex-column gap-2 mb-2">
+    <section
+      *ngIf="orcamento$ | async as orcamento"
+      class="d-flex border rounded-2 shadow-lg bg-secondary-subtle"
+    >
+      <div class="col-3 p-1">
+        <p>
+          <span class="btn btn-sm btn-secondary" title="Buscar Cliente"
+            ><i class="fa-solid fa-user"></i
+          ></span>
+          Nome:
+          <span>{{ orcamento.cliente.nome | titlecase }}</span>
+        </p>
+        <p>
+          Telefone :
+          <span>{{
+            orcamento.cliente.telefone | mask : "(99) 9 9999-9999"
+          }}</span>
+        </p>
+      </div>
+      <div class="col-3">
+        <p>
+          Veiculo : <span>{{ orcamento.veiculo.modelo | titlecase }}</span>
+        </p>
+        <p>
+          Placa : <span>{{ orcamento.veiculo.placa | uppercase }}</span>
+        </p>
+        <p>
+          Chassis :
+          <span>{{
+            orcamento.veiculo.chassi || "Não Informado" | uppercase
+          }}</span>
+        </p>
+        <p>
+          Ano : <span>{{ orcamento.veiculo.ano }}</span>
+        </p>
+      </div>
+      <div class="col-3">
+        <p>Combustível : <span></span></p>
+        <p>
+          Cor : <span>{{ orcamento.veiculo.cor || "Não Infomado" }}</span>
+        </p>
+        <p>Quilometragem : <span></span></p>
+        <p>Observações : <span></span></p>
+      </div>
+      <div class="col-3">
+        <p>
+          Status : <span>{{ orcamento.status }}</span>
+        </p>
+        <p>
+          Abertura :
+          <span>{{ orcamento.createdAt | date : "dd/MM/yy" }}</span>
+        </p>
+        <p>Fechada : <span></span></p>
+      </div>
+    </section>
+    <section class="d-flex border rounded-2 shadow-lg bg-secondary-subtle">
+      <div class="d-flex p-1 gap-1 flex-wrap align-items-center">
+        <button
+          (click)="showModalBuscarProduto()"
+          class="btn btn-sm btn-secondary"
+        >
+          Buscar
+        </button>
+        <button (click)="inputAvulso()" class="btn btn-sm btn-secondary">
+          Avulsa
+        </button>
+        <button class="btn btn-sm btn-secondary">Alterar Status</button>
+        <button class="btn btn-sm btn-success">Gerar Pdf</button>
+        <button (click)="showCotacaoVendas()" class="btn btn-sm btn-warning">
+          Cotação
+        </button>
+        <button class="btn btn-sm btn-danger">Finalizar</button>
+      </div>
+    </section>
+    <section
+      class="d-flex flex-column p-1 flex-grow-1 border rounded-2 shadow-lg bg-secondary-subtle"
+    >
+      @if(isCotacaoVendasShow) {
+      <app-cotacao-vendas [orcamento$]="orcamento$" />
+      } @else {
+      <div class="row">
+        <form
+          [formGroup]="itemForm"
+          (ngSubmit)="submitItem()"
+          (keydown.enter)="$event.preventDefault()"
+          (keydown.esc)="limparForm()"
+        >
+          <div class="d-flex gap-1 border shadow-lg p-2">
+            <div class="col-1">
+              <label for="quantidade" class="form-label">Quant</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="quantidade"
+                #quantidadeInput
+              />
+            </div>
+            <div class="col-2">
+              <label for="sku" class="form-label">SKU</label>
+              <input type="text" class="form-control" formControlName="sku" />
+            </div>
+            <div class="flex-grow-1">
+              <label for="nome" class="form-label">Nome</label>
+              <input type="text" class="form-control" formControlName="nome" />
+            </div>
+            <div class="col-2">
+              <label for="fabricante" class="form-label">Fabricante</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="fabricante"
+              />
+            </div>
+            <div class="col-1">
+              <label for="desconto" class="form-label">Desconto</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="desconto"
+              />
+            </div>
+            <div class="col-1">
+              <label for="valor" class="form-label">Valor</label>
+              <input
+                type="tel"
+                class="form-control"
+                formControlName="valorUnitario"
+                (keydown.enter)="submitItem()"
+                currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+              />
+            </div>
+            <div class="d-flex gap-1 justify-content-center align-items-end">
+              <button class="btn btn-sm btn-secondary">Gravar</button>
+              <button (click)="limparForm()" class="btn btn-sm btn-danger">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col d-flex gap-2">
+        <div class="flex-grow-1">
+          <h5 class="text-center">Peças</h5>
+          <table
+            class="table table-sm table-hover table-striped table-secondary"
+          >
+            <thead>
+              <tr class="table-secondary">
+                <th>Quant</th>
+                <th>SKU</th>
+                <th>Nome</th>
+                <th>Fabricante</th>
+                <th>Desconto</th>
+                <th>Valor</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody *ngIf="orcamento$ | async as orcamento">
+              <tr *ngFor="let item of orcamento.items">
+                <td>{{ item.quantidade }}</td>
+                <td class="col-2">{{ item.sku }}</td>
+                <td class="col-4">{{ item.nome }}</td>
+                <td>{{ item.fabricante }}</td>
+                <td>0</td>
+                <td>{{ item.valorUnitario | currency }}</td>
+                <td>{{ item.quantidade * item.valorUnitario | currency }}</td>
+                <td class="d-flex gap-1">
+                  <button
+                    (click)="removerItemOrcamento(item.id)"
+                    class="btn btn-sm btn-danger"
+                  >
+                    Remover
+                  </button>
+                  <button
+                    (click)="editarItemOrcamento(item)"
+                    class="btn btn-sm btn-warning"
+                  >
+                    Editar
+                  </button>
+                  <button class="btn btn-sm btn-dark">Observações</button>
+                </td>
+              </tr>
+              <tr *ngFor="let avulso of orcamento.itemAvulsos">
+                <td>{{ avulso.quantidade }}</td>
+                <td>{{ avulso.sku | uppercase }}</td>
+                <td>
+                  <span class="text-danger fw-bold">*</span
+                  >{{ avulso.nome | titlecase }}
+                </td>
+                <td>{{ avulso.fabricante | uppercase }}</td>
+                <td>0</td>
+                <td>{{ avulso.valorVenda | currency }}</td>
+                <td>
+                  {{ avulso.quantidade * avulso.valorVenda | currency }}
+                </td>
+                <td class="d-flex gap-1">
+                  <button
+                    (click)="removerAvulso(avulso.id)"
+                    class="btn btn-sm btn-danger"
+                  >
+                    Remover
+                  </button>
+                  <button
+                    (click)="editarItemAvulso(avulso)"
+                    class="btn btn-sm btn-warning"
+                  >
+                    Editar
+                  </button>
+                  <button class="btn btn-sm btn-dark">Observações</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-2 shadow-lg">
+          <h5 class="text-center">Total</h5>
+          <div class="d-flex flex-column gap-2 p-1">
+            <div class="d-flex gap-2">
+              <span>Pecas</span>
+              <span class="form-control text-end">R$ 1000,00</span>
+            </div>
+            <div class="d-flex gap-2">
+              <span>Cupom</span>
+              <span class="form-control text-end">R$ 1000,00</span>
+            </div>
+            <div class="d-flex gap-2">
+              <span>Desconto</span>
+              <span class="form-control text-end">R$ 1000,00</span>
+            </div>
+            <div class="d-flex gap-2">
+              <span>Frete</span>
+              <span class="form-control text-end">R$ 1000,00</span>
+            </div>
+            <div class="d-flex gap-2">
+              <span>Total</span>
+              <span class="form-control text-end">R$ 1000,00</span>
+            </div>
+            <div>
+              <label class="form-label">Observações</label>
+              <textarea
+                class="form-control"
+                aria-label="With textarea"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </section>
+  </main>
+</div>

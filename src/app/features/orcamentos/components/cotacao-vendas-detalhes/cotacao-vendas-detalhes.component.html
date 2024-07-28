@@ -1,0 +1,75 @@
+@if (isModalIncluirItemCotacaoShow) {
+<app-modal-incluir-item-cotacao
+  [cotacaoId]="cotacaoId"
+  (showModalIncluirItemCotacao)="showIncluirItemCotacao()"
+  (itemAdicionado)="getCotacao()"
+/>
+}
+<div class="container-fluid">
+  <div class="d-flex flex-grow-1 gap-2">
+    <div>
+      <table class="table table-sm table-hover table-striped">
+        <thead>
+          <tr>
+            <th>Quant</th>
+            <th>Sku</th>
+            <th>Nome</th>
+            <th>
+              <button
+                (click)="showIncluirItemCotacao()"
+                class="btn btn-sm btn-secondary"
+              >
+                Adicionar
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody *ngIf="cotacao$ | async as cotacao">
+          <tr *ngFor="let item of cotacao.items">
+            <td>{{ item.quantidade }}</td>
+            <td>{{ item.sku | uppercase }}</td>
+            <td>{{ item.nome }}</td>
+            <td>
+              <button
+                (click)="listarPrecoItemCotacao(item.id)"
+                class="btn btn-sm btn-primary"
+              >
+                Detalhes
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex-grow-1">
+      <div>
+        <table class="table table-sm table-hover table-striped">
+          <thead>
+            <tr>
+              <th>Quant</th>
+              <th>Sku</th>
+              <th>Fabricante</th>
+              <th>Prazo Expedição</th>
+              <th>Fornecedor</th>
+              <th>Preço</th>
+              <th>Acões</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="precoItemCotacao$ | async as precoItem">
+            <tr *ngFor="let item of precoItem">
+              <td>{{ item.quantidadeAtendida }}</td>
+              <td>{{ item.sku }}</td>
+              <td>{{ item.fabricante | uppercase }}</td>
+              <td>{{ item.prazoExpedicao }}</td>
+              <td>{{ item.fornecedor.nomeFantasia }}</td>
+              <td>{{ item.ValorVenda }}</td>
+              <td>
+                <button class="btn btn-sm btn-primary">Detalhes</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

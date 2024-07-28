@@ -1,0 +1,48 @@
+<div class="col-12 flex-grow-1 h-100 w-100">
+  <div class="d-flex flex-column flex-grow-1">
+    <h5>Cotação</h5>
+    <div class="d-flex gap-1 flex-grow-1">
+      @if(isCotacaoDetalhesShow) {
+      <div class="gap-1 flex-grow-1">
+        <app-cotacao-vendas-detalhes [cotacaoId]="cotacaoId" />
+      </div>
+      } @else {
+      <table class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Criado</th>
+            <th>Última Atualização</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody *ngIf="orcamento$ | async as orcamento">
+          <tr *ngFor="let cotacao of orcamento.cotacoes">
+            <td>{{ cotacao.status }}</td>
+            <td>{{ cotacao.createdAt | date : "dd/MM/yy HH:mm" }}</td>
+            <td>{{ cotacao.updatedAt | date : "dd/MM/yy HH:mm" }}</td>
+            <td>
+              <button
+                (click)="showCotacaoDetalhes(cotacao.id)"
+                class="btn btn-sm btn-primary"
+              >
+                Detalhes
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="orcamento.cotacoes.length < 1">
+            <td colspan="4">
+              <p class="text-center">
+                Nenhuma cotação
+                <span (click)="createCotacao()" class="btn btn-sm btn-secondary"
+                  >Nova Cotação</span
+                >
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      }
+    </div>
+  </div>
+</div>

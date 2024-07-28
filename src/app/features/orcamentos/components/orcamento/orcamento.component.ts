@@ -36,7 +36,7 @@ export class OrcamentoComponent {
   orcamento$ = new Observable<Orcamento>();
   isModalBuscarProduto = false;
   editarItem = false;
-  isCotacaoVendasShow = true;
+  isCotacaoVendasShow = false;
 
   itemForm = new FormGroup({
     avulsoId: new FormControl(''),

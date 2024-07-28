@@ -1,9 +1,8 @@
 import { TipoCodigoSimilar } from '../enums/tipoCodigoSimilar';
 
-export interface CodigoSimilar {
-  id: string;
+export type AdicionarCodigoSimilarCotacao = {
+  itemId: string;
   sku: string;
   fabricante: string;
-  itemId: string;
   tipo: TipoCodigoSimilar;
-}
+};

@@ -1,1 +1,62 @@
-<p>novo-orcamento works!</p>
+<div class="container-fluid bg-dark-subtle h-100 d-flex flex-column">
+  <div class="text-center">
+    <h5>Novo Orçamento</h5>
+  </div>
+  <main class="h-100 d-flex flex-column">
+    <section
+      class="d-flex flex-column flex-grow-1 mb-2 border p-1 rounded-2 shadow-lg bg-secondary-subtle"
+    >
+      <div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-secondary">Voltar</button>
+          <button class="btn btn-sm btn-secondary">Novo Cliente</button>
+        </div>
+      </div>
+      <form class="p-2">
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="searchInput"
+            [formControl]="clienteSearch"
+            autocomplete="off"
+          />
+          <label for="clienteSearch">Busque por nome, telefone ou placa</label>
+        </div>
+      </form>
+      <div class="col-12 p-2 bg-dark-subtle flex-grow-1">
+        <table class="table table-sm table-hover table-striped table-secondary">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Veiculo(s)</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="clientes$ | async as clientes">
+            <tr *ngFor="let cliente of clientes">
+              <td>{{ cliente.nome | titlecase }}</td>
+              <td>{{ cliente.telefone | mask : "(00) 0 0000-0000" }}</td>
+              <td>
+                <ul class="d-flex flex-wrap gap-1">
+                  <li class="nav-link" *ngFor="let veiculo of cliente.veiculos">
+                    <button
+                      (click)="createOrcamento(cliente.id, veiculo.id)"
+                      class="btn btn-sm btn-secondary"
+                    >
+                      {{ veiculo.modelo | titlecase }} -
+                      {{ veiculo.placa | uppercase }}
+                    </button>
+                  </li>
+                  <li class="nav-link">
+                    <button class="btn btn-sm btn-secondary">Novo Carro</button>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>

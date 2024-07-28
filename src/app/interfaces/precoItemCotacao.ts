@@ -6,7 +6,7 @@ export interface PrecoItemCotacao {
   sku: string;
   fabricante: string;
   valorCusto: number;
-  ValorVenda: number;
+  valorVenda: number;
   prazoExpedicao: number;
   observacao: string;
   fornecedor: Fornecedor;

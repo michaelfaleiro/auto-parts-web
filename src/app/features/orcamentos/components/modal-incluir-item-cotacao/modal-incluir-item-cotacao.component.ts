@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CotacaoService } from '../../../cotacoes/services/cotacao.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AdicionarItemCotacao } from '../../../../types/adicionarItemCotacao';
+import { TipoCodigoSimilar } from '../../../../enums/tipoCodigoSimilar';
 
 @Component({
   selector: 'app-modal-incluir-item-cotacao',

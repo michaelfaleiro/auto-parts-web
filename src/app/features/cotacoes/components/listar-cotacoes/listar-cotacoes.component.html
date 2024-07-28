@@ -1,1 +1,40 @@
-<p>listar-cotacoes works!</p>
+<div class="container-fluid bg-dark-subtle h-100 d-flex flex-column">
+  <div>
+    <h5 class="text-center">Listar Cotações</h5>
+  </div>
+  <section class="d-flex h-100 mb-2">
+    <div class="d-flex gap-1 flex-wrap flex-grow-1">
+      <div
+        *ngFor="let cotacao of cotacoes$ | async"
+        class="card"
+        style="width: 18rem; height: 10rem"
+      >
+        <div class="card-body">
+          <h5 class="card-title">
+            <div class="d-flex">
+              {{ cotacao.cliente.nome | titlecase }} -
+              {{ cotacao.veiculo.modelo }}
+            </div>
+          </h5>
+          <p class="card-text">
+            {{ cotacao.veiculo.placa | titlecase }} -
+            {{ cotacao.veiculo.chassi | uppercase }}
+          </p>
+          <div class="d-flex gap-1 justify-content-between">
+            <span>Status :</span> {{ cotacao.status }}
+            <span
+              ><a
+                routerLink="/cotacao/{{ cotacao.id }}"
+                class="btn btn-sm btn-secondary"
+                >Abrir</a
+              ></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-2 bg-secondary-subtle h-100">
+      <h6>Filtros</h6>
+    </div>
+  </section>
+</div>

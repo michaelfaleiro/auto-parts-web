@@ -1,1 +1,48 @@
-<p>listar-orcamentos works!</p>
+<div class="container-fluid bg-dark-subtle h-100 d-flex flex-column">
+  <div class="text-center">
+    <h5>Listar Orçamentos</h5>
+  </div>
+  <div class="d-flex">
+    <section class="col-10">
+      <div class="d-flex gap-1 flex-wrap">
+        <div
+          *ngFor="let orcamento of orcamentos$ | async"
+          class="card"
+          style="width: 18rem"
+        >
+          <div class="card-body">
+            <h5 class="card-title">
+              <div class="d-flex">
+                {{ orcamento.cliente.nome | titlecase }} -
+
+                {{ orcamento.veiculo.modelo }}
+              </div>
+            </h5>
+            <p class="card-text">
+              {{ orcamento.veiculo.placa | titlecase }} -
+              {{ orcamento.veiculo.chassi | uppercase }}
+            </p>
+            <div class="d-flex gap-1 justify-content-between">
+              <span>Status :</span> {{ orcamento.status }}
+              <span
+                ><a
+                  routerLink="/orcamento/{{ orcamento.id }}"
+                  class="btn btn-sm btn-secondary"
+                  >Abrir</a
+                ></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <aside class="col d-flex flex-column">
+      <div>
+        <a class="w-100 btn btn-sm btn-secondary" routerLink="/novo-orcamento">
+          Novo Orçamento
+        </a>
+      </div>
+      <div></div>
+    </aside>
+  </div>
+</div>

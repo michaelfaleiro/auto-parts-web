@@ -1,0 +1,118 @@
+<div class="modal" style="display: block">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Códigos similares</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="closeModal()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <form
+            [formGroup]="similarForm"
+            (ngSubmit)="submit()"
+            (keydown.enter)="$event.preventDefault()"
+            #formDir="ngForm"
+          >
+            <div class="mb-3">
+              <label for="sku">Sku</label>
+              <input
+                type="text"
+                class="form-control"
+                id="sku"
+                name="sku"
+                formControlName="sku"
+                autocomplete="off"
+                #skuInput
+              />
+              @if(formDir.submitted) {
+              <small
+                class="text-danger"
+                >{{ similarForm.get('sku')?.errors?.['required']
+                    ? 'Informe o Sku'
+                    : '' }}</small
+              >
+              }
+            </div>
+            <div class="mb-3">
+              <label for="fabricante" class="form-label">Fabricante</label>
+              <input
+                type="text"
+                class="form-control"
+                id="fabricante"
+                name="fabricante"
+                formControlName="fabricante"
+                autocomplete="off"
+              />
+              @if(formDir.submitted) {
+              <small
+                class="text-danger"
+                >{{ similarForm.get('fabricante')?.errors?.['required']
+                    ? 'Informe o fabricante'
+                    : '' }}</small
+              >
+              }
+            </div>
+            <div class="mb-3">
+              <select class="form-select" formControlName="tipo">
+                <option value="1">Similar</option>
+                <option value="2">Mesmo Produto</option>
+              </select>
+            </div>
+            <div class="d-flex gap-2 justify-content-center">
+              <button type="submit" class="btn btn-sm btn-secondary">
+                Gravar
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                (click)="closeModal()"
+              >
+                Fechar
+              </button>
+            </div>
+          </form>
+        </div>
+        <div>
+          <table class="table table-sm table-hover table-striped">
+            <thead>
+              <tr>
+                <th>Sku</th>
+                <th>Fabricante</th>
+                <th>Tipo</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody *ngIf="codigoSimilares$ | async as codigoSimilares">
+              <tr *ngFor="let codigoSimilar of codigoSimilares">
+                <td>{{ codigoSimilar.sku }}</td>
+                <td>{{ codigoSimilar.fabricante }}</td>
+                <td>{{ getTipoCodigoSimilarNome(codigoSimilar.tipo) }}</td>
+                <td class="d-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-danger"
+                    (click)="removeCodigoSimilar(codigoSimilar.id)"
+                  >
+                    Excluir
+                  </button>
+                  <button
+                    class="btn btn-sm btn-warning"
+                    (click)="editarCodigoSimilar(codigoSimilar)"
+                  >
+                    Editar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

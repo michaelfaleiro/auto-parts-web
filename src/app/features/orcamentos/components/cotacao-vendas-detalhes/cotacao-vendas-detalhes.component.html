@@ -4,10 +4,15 @@
   (showModalIncluirItemCotacao)="showIncluirItemCotacao()"
   (itemAdicionado)="getCotacao()"
 />
+} @if (isModalCodigoSimilarShow) {
+<app-modal-codigo-similar
+  [itemId]="itemId"
+  (showModalCodigoSimilar)="showCodigoSimilar(itemId)"
+/>
 }
 <div class="container-fluid">
   <div class="d-flex flex-grow-1 gap-2">
-    <div>
+    <div class="col-4">
       <table class="table table-sm table-hover table-striped">
         <thead>
           <tr>
@@ -29,7 +34,19 @@
             <td>{{ item.quantidade }}</td>
             <td>{{ item.sku | uppercase }}</td>
             <td>{{ item.nome }}</td>
-            <td>
+            <td class="d-flex gap-1">
+              <button
+                (click)="removerItemCotacao(item.id)"
+                class="btn btn-sm btn-danger"
+              >
+                Excluir
+              </button>
+              <button
+                (click)="showCodigoSimilar(item.id)"
+                class="btn btn-sm btn-warning"
+              >
+                Similar
+              </button>
               <button
                 (click)="listarPrecoItemCotacao(item.id)"
                 class="btn btn-sm btn-primary"
@@ -55,18 +72,24 @@
               <th>Acões</th>
             </tr>
           </thead>
-          <tbody *ngIf="precoItemCotacao$ | async as precoItem">
-            <tr *ngFor="let item of precoItem">
-              <td>{{ item.quantidadeAtendida }}</td>
-              <td>{{ item.sku }}</td>
-              <td>{{ item.fabricante | uppercase }}</td>
-              <td>{{ item.prazoExpedicao }}</td>
-              <td>{{ item.fornecedor.nomeFantasia }}</td>
-              <td>{{ item.ValorVenda }}</td>
+          <tbody>
+            @if ((itemCotacao$ | async)?.precoItemCotacoes) {
+            <tr *ngFor="let preco of (itemCotacao$ | async)?.precoItemCotacoes">
+              <td>{{ preco.quantidadeAtendida }}</td>
+              <td>{{ preco.sku }}</td>
+              <td>{{ preco.fabricante | uppercase }}</td>
+              <td>{{ preco.prazoExpedicao }} Dia(s)</td>
+              <td>{{ preco.fornecedor.nomeFantasia }}</td>
+              <td>{{ preco.valorVenda | currency }}</td>
               <td>
                 <button class="btn btn-sm btn-primary">Detalhes</button>
               </td>
             </tr>
+            } @else {
+            <tr>
+              <td colspan="7">Escolha um item para visualizar</td>
+            </tr>
+            }
           </tbody>
         </table>
       </div>

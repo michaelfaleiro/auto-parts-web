@@ -1,0 +1,124 @@
+<div class="container-fluid bg-dark-subtle h-100 d-flex flex-column">
+  <div>
+    <h5 class="text-center">Cotação</h5>
+  </div>
+  <section class="d-flex gap-2 flex-column h-100 mb-2">
+    <div
+      class="d-flex border rounded-2 shadow-lg bg-secondary-subtle"
+      *ngIf="cotacao$ | async as cotacao"
+    >
+      <div class="col-3 p-1">
+        <p>
+          Nome:
+          <span>{{ cotacao.cliente.nome | titlecase }}</span>
+        </p>
+        <p>
+          Telefone:
+          <span>{{
+            cotacao.cliente.telefone | mask : "(99) 9 9999-9999"
+          }}</span>
+        </p>
+      </div>
+      <div class="col-3">
+        <p>
+          Veiculo : <span>{{ cotacao.veiculo.modelo | titlecase }}</span>
+        </p>
+        <p>
+          Placa : <span>{{ cotacao.veiculo.placa | uppercase }}</span>
+        </p>
+        <p>
+          Chassis :
+          <span>{{
+            cotacao.veiculo.chassi || "Não Informado" | uppercase
+          }}</span>
+        </p>
+        <p>
+          Ano : <span>{{ cotacao.veiculo.ano }}</span>
+        </p>
+      </div>
+      <div class="col-3">
+        <p>Combustível : <span></span></p>
+        <p>
+          Cor : <span>{{ cotacao.veiculo.cor || "Não Infomado" }}</span>
+        </p>
+        <p>Quilometragem : <span></span></p>
+        <p>Observações : <span></span></p>
+      </div>
+      <div class="col-3">
+        <p>
+          Status : <span>{{ cotacao.status }}</span>
+        </p>
+        <p>
+          Abertura :
+          <span>{{ cotacao.createdAt | date : "dd/MM/yy" }}</span>
+        </p>
+        <p>Fechada : <span></span></p>
+      </div>
+    </div>
+    <div class="d-flex border rounded-2 shadow-lg bg-secondary-subtle">
+      <div class="p-1 d-flex gap-1">
+        <button class="btn btn-sm btn-secondary">Enviar Cotação</button>
+        <button class="btn btn-sm btn-secondary">Alterar Status</button>
+      </div>
+    </div>
+    <div
+      class="d-flex p-1 gap-2 border rounded-2 shadow-lg bg-secondary-subtle flex-grow-1"
+    >
+      <div class="col-5">
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr>
+              <th>Quant</th>
+              <th>Sku</th>
+              <th>Nome</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody *ngIf="cotacao$ | async as cotacao">
+            <tr *ngFor="let item of cotacao.items">
+              <td>{{ item.quantidade }}</td>
+              <td>{{ item.sku | uppercase }}</td>
+              <td>{{ item.nome | titlecase }}</td>
+              <td class="d-flex gap-1">
+                <button class="btn btn-sm btn-secondary">Similar</button>
+                <button class="btn btn-sm btn-secondary">Preço</button>
+                <button class="btn btn-sm btn-secondary">Detalhes</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex-grow-1">
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr>
+              <th>Quant</th>
+              <th>Sku</th>
+              <th>Fabricante</th>
+              <th>Prazo Expedição</th>
+              <th>Fornecedor</th>
+              <th>Custo</th>
+              <th>Venda</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>123456</td>
+              <td>Delphi</td>
+              <td>1 dia</td>
+              <td>Delphi</td>
+              <td>R$ 100,00</td>
+              <td>R$ 150,00</td>
+              <td class="d-flex gap-1">
+                <button class="btn btn-sm btn-secondary">Cadastrar</button>
+                <button class="btn btn-sm btn-secondary">Detalhes</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

@@ -8,7 +8,7 @@ export interface ItemCotacao {
   sku: string;
   tipo: string;
   codigosimilares: CodigoSimilar[];
-  precoItem: PrecoItemCotacao[];
+  precoItemCotacoes: PrecoItemCotacao[];
   createdAt: string;
   updatedAt: string;
 }

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Cotacao } from '../../../../interfaces/cotacao';
 import { Orcamento } from '../../../../interfaces/orcamento';
 import { CotacaoVendasDetalhesComponent } from '../cotacao-vendas-detalhes/cotacao-vendas-detalhes.component';
+import { MessageService } from '../../../../shared/messages/services/message.service';
 
 @Component({
   selector: 'app-cotacao-vendas',
@@ -20,7 +21,10 @@ import { CotacaoVendasDetalhesComponent } from '../cotacao-vendas-detalhes/cotac
 export class CotacaoVendasComponent {
   @Input() orcamento$ = new Observable<Orcamento>();
 
-  constructor(private cotacaoService: CotacaoService) {}
+  constructor(
+    private cotacaoService: CotacaoService,
+    private messageService: MessageService
+  ) {}
 
   cotacao$ = new Observable<Cotacao>();
   cotacaoId = '';
@@ -37,15 +41,26 @@ export class CotacaoVendasComponent {
   }
 
   carregarCotacao() {
-    this.orcamento$.subscribe((orcamento) => {
-      this.orcamentoId = orcamento.id;
-    });
+    this.orcamento$.subscribe(
+      (orcamento) => {
+        this.orcamentoId = orcamento.id;
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   createCotacao() {
-    this.cotacaoService.create(this.orcamentoId).subscribe((cotacao) => {
-      this.cotacaoId = cotacao.id;
-      this.carregarCotacao();
-    });
+    this.cotacaoService.create(this.orcamentoId).subscribe(
+      (cotacao) => {
+        this.cotacaoId = cotacao.id;
+        this.carregarCotacao();
+        this.messageService.success('Cotação criada com sucesso');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 }

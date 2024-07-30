@@ -23,6 +23,7 @@
                 id="floatingInput"
                 [formControl]="produtoSearchForm"
                 autocomplete="off"
+                (keydown.enter)="$event.preventDefault()"
               />
               <label for="floatingInput">Digite Sku ou Nome para buscar</label>
             </div>
@@ -39,12 +40,14 @@
                 <th scope="col">Ações</th>
               </tr>
             </thead>
-            <tbody *ngIf="produtos$ | async as produtos">
-              <tr *ngFor="let produto of produtos">
-                <td>{{ produto.sku }}</td>
-                <td>{{ produto.nome }}</td>
-                <td>{{ produto.fabricante }}</td>
-                <td>{{ produto.valorVenda }}</td>
+            <tbody>
+              @if(produtos$ | async){
+
+              <tr *ngFor="let produto of produtos$ | async">
+                <td>{{ produto.sku | uppercase }}</td>
+                <td>{{ produto.nome | titlecase }}</td>
+                <td>{{ produto.fabricante | titlecase }}</td>
+                <td>{{ produto.valorVenda | currency }}</td>
                 <td>
                   <button
                     (click)="selectProduto(produto)"
@@ -52,6 +55,12 @@
                   >
                     Adicionar
                   </button>
+                </td>
+              </tr>
+              }
+              <tr *ngIf="(produtos$ | async)?.length === 0">
+                <td colspan="5" class="text-center">
+                  Nenhum produto encontrado
                 </td>
               </tr>
             </tbody>

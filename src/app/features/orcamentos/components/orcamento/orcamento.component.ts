@@ -6,7 +6,13 @@ import { Observable, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NgxMaskPipe } from 'ngx-mask';
 import { NgxCurrencyDirective } from 'ngx-currency';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AdicionarItemOrcamento } from '../../../../types/adicionarItemOrcamento';
 import { Produto } from '../../../../interfaces/produto';
 import { AdicionarAvulsoOrcamento } from '../../../../types/adicionarAvulsoOrcamento';
@@ -14,6 +20,7 @@ import { ModalBuscarProdutoComponent } from '../modal-buscar-produto/modal-busca
 import { ItemOrcamento } from '../../../../interfaces/itemOrcamento';
 import { ItemAvulsoOrcamento } from '../../../../interfaces/itemAvulsoOrcamento';
 import { CotacaoVendasComponent } from '../cotacao-vendas/cotacao-vendas.component';
+import { MessageService } from '../../../../shared/messages/services/message.service';
 
 @Component({
   selector: 'app-orcamento',
@@ -25,6 +32,7 @@ import { CotacaoVendasComponent } from '../cotacao-vendas/cotacao-vendas.compone
     NgxCurrencyDirective,
     ModalBuscarProdutoComponent,
     CotacaoVendasComponent,
+    FormsModule,
   ],
   templateUrl: './orcamento.component.html',
   styleUrl: './orcamento.component.css',
@@ -38,19 +46,27 @@ export class OrcamentoComponent {
   editarItem = false;
   isCotacaoVendasShow = false;
 
+  valorCupom = 0;
+  descontoPecas = 0;
+  valorFrete = 0;
+
   itemForm = new FormGroup({
     avulsoId: new FormControl(''),
     produtoId: new FormControl(''),
-    quantidade: new FormControl(),
-    sku: new FormControl(''),
-    nome: new FormControl(''),
-    fabricante: new FormControl(''),
+    quantidade: new FormControl(1, [Validators.required, Validators.min(1)]),
+    sku: new FormControl('', [Validators.required]),
+    nome: new FormControl('', [Validators.required]),
+    fabricante: new FormControl('', [Validators.required]),
     desconto: new FormControl(''),
-    valorUnitario: new FormControl(''),
+    valorUnitario: new FormControl('', [
+      Validators.required,
+      Validators.min(0.01),
+    ]),
   });
 
   constructor(
     private orcamentoService: OrcamentoService,
+    private messageService: MessageService,
     private route: ActivatedRoute
   ) {}
 
@@ -60,6 +76,16 @@ export class OrcamentoComponent {
     });
     this.getOrcamento(this.orcamentoId);
     this.limparForm();
+  }
+
+  valorTotalOrcamento(
+    pecas: number,
+    cupom: number,
+    desconto: number,
+    frete: number
+  ) {
+    const total = pecas - cupom - desconto + frete;
+    return total;
   }
 
   showModalBuscarProduto() {
@@ -75,18 +101,19 @@ export class OrcamentoComponent {
   }
 
   submitItem() {
-    if (this.itemForm.get('produtoId')?.value) {
-      if (this.editarItem) {
-        this.updateItemOrcamento();
-      } else {
-        this.adicionarItemOrcamento();
-      }
+    if (this.itemForm.invalid) {
+      this.messageService.error('Preencha todos os campos obrigatórios!');
+      return;
+    }
+
+    const produtoId = this.itemForm.get('produtoId')?.value;
+
+    if (produtoId) {
+      this.editarItem
+        ? this.updateItemOrcamento()
+        : this.adicionarItemOrcamento();
     } else {
-      if (this.editarItem) {
-        this.updateAvulso();
-      } else {
-        this.adicionarAvulso();
-      }
+      this.editarItem ? this.updateAvulso() : this.adicionarAvulso();
     }
   }
 
@@ -109,7 +136,7 @@ export class OrcamentoComponent {
       produtoId: item.produtoId,
       sku: item.sku,
       nome: item.nome,
-      quantidade: 1,
+      quantidade: item.quantidade,
       fabricante: item.fabricante,
       valorUnitario: item.valorUnitario.toString(),
     });
@@ -126,10 +153,16 @@ export class OrcamentoComponent {
       quantidade: Number(this.itemForm.get('quantidade')?.value),
       valorUnitario: Number(this.itemForm.get('valorUnitario')?.value),
     };
-    this.orcamentoService.adicionarItem(item).subscribe(() => {
-      (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
-        this.limparForm();
-    });
+    this.orcamentoService.adicionarItem(item).subscribe(
+      () => {
+        (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
+          this.limparForm();
+        this.messageService.success('Item adicionado com sucesso!');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   updateItemOrcamento() {
@@ -139,18 +172,28 @@ export class OrcamentoComponent {
       quantidade: Number(this.itemForm.get('quantidade')?.value),
       valorUnitario: Number(this.itemForm.get('valorUnitario')?.value),
     };
-    this.orcamentoService.updateItem(item).subscribe(() => {
-      (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
-        this.limparForm();
-    });
+    this.orcamentoService.updateItem(item).subscribe(
+      () => {
+        (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
+          this.limparForm();
+        this.messageService.success('Item atualizado com sucesso!');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   removerItemOrcamento(itemId: string) {
-    this.orcamentoService
-      .removerItem(this.orcamentoId, itemId)
-      .subscribe(() => {
+    this.orcamentoService.removerItem(this.orcamentoId, itemId).subscribe(
+      () => {
         this.getOrcamento(this.orcamentoId);
-      });
+        this.messageService.success('Item removido com sucesso!');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   inputAvulso() {
@@ -173,10 +216,16 @@ export class OrcamentoComponent {
       fabricante: this.itemForm.get('fabricante')?.value!,
       valorVenda: Number(this.itemForm.get('valorUnitario')?.value),
     };
-    this.orcamentoService.adicionarAvulso(item).subscribe(() => {
-      (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
-        this.limparForm();
-    });
+    this.orcamentoService.adicionarAvulso(item).subscribe(
+      () => {
+        (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
+          this.limparForm();
+        this.messageService.success('Item avulso adicionado com sucesso!');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   editarItemAvulso(item: ItemAvulsoOrcamento) {
@@ -203,18 +252,28 @@ export class OrcamentoComponent {
       fabricante: this.itemForm.get('fabricante')?.value!,
       valorVenda: Number(this.itemForm.get('valorUnitario')?.value),
     };
-    this.orcamentoService.updateAvulso(avulso).subscribe(() => {
-      (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
-        this.limparForm();
-    });
+    this.orcamentoService.updateAvulso(avulso).subscribe(
+      () => {
+        (this.orcamento$ = this.getOrcamento(this.orcamentoId)),
+          this.limparForm();
+        this.messageService.success('Item avulso atualizado com sucesso!');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   removerAvulso(itemId: string) {
-    this.orcamentoService
-      .removerAvulso(this.orcamentoId, itemId)
-      .subscribe(() => {
+    this.orcamentoService.removerAvulso(this.orcamentoId, itemId).subscribe(
+      () => {
         this.getOrcamento(this.orcamentoId);
-      });
+        this.messageService.success('Item avulso removido com sucesso!');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   limparForm() {

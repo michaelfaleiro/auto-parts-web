@@ -12,6 +12,7 @@ export interface Orcamento {
   itemAvulsos: ItemAvulsoOrcamento[];
   cotacoes: Cotacao[];
   status: string;
+  valorTotal: number;
   createdAt: string;
   updatedAt: string;
 }

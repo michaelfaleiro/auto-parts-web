@@ -9,6 +9,7 @@ import { ItemCotacao } from '../../../interfaces/itemCotacao';
 import { RemoverItemCotacao } from '../../../types/removerItemCotacao';
 import { AdicionarCodigoSimilarCotacao } from '../../../types/adicionarCodigoSimilarCotacao';
 import { CodigoSimilar } from '../../../interfaces/codigoSimilar';
+import { AdicionarPrecoFornecedor } from '../../../types/adicionarPrecoFornecedor';
 
 @Injectable({
   providedIn: 'root',
@@ -103,6 +104,35 @@ export class CotacaoService {
     return this.http
       .delete<{ data: Cotacao; errors: string[] }>(
         `${this.url}/similares/${codigoSimilar}`
+      )
+      .pipe();
+  }
+
+  adicionarPrecoFornecedor(precoFornecedor: AdicionarPrecoFornecedor) {
+    return this.http
+      .post<{ data: Cotacao; errors: string[] }>(
+        `${this.url}/adicionar-preco-item`,
+        precoFornecedor
+      )
+      .pipe();
+  }
+
+  updatePrecoFornecedor(precoFornecedor: AdicionarPrecoFornecedor) {
+    return this.http
+      .put<{ data: Cotacao; errors: string[] }>(
+        `${this.url}/update-preco-item`,
+        precoFornecedor
+      )
+      .pipe();
+  }
+
+  removerPrecoFornecedor(itemId: string, precoItemId: string) {
+    return this.http
+      .delete<{ data: Cotacao; errors: string[] }>(
+        `${this.url}/remover-preco-item`,
+        {
+          body: { itemId, precoItemId },
+        }
       )
       .pipe();
   }

@@ -3,6 +3,7 @@ import { CotacaoService } from '../../../cotacoes/services/cotacao.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AdicionarItemCotacao } from '../../../../types/adicionarItemCotacao';
 import { TipoCodigoSimilar } from '../../../../enums/tipoCodigoSimilar';
+import { MessageService } from '../../../../shared/messages/services/message.service';
 
 @Component({
   selector: 'app-modal-incluir-item-cotacao',
@@ -24,7 +25,10 @@ export class ModalIncluirItemCotacaoComponent {
     tipo: new FormControl(1),
   });
 
-  constructor(private cotacaoService: CotacaoService) {}
+  constructor(
+    private cotacaoService: CotacaoService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {}
 
@@ -40,10 +44,15 @@ export class ModalIncluirItemCotacaoComponent {
       quantidade: this.itemCotacaooForm.get('quantidade')?.value,
       tipo: Number(this.itemCotacaooForm.get('tipo')?.value),
     };
-    this.cotacaoService.adicionarItemCotacao(itemCotacao).subscribe(() => {
-      this.closeModal();
-      this.itemAdicionado.emit();
-    });
+    this.cotacaoService.adicionarItemCotacao(itemCotacao).subscribe(
+      () => {
+        this.closeModal();
+        this.itemAdicionado.emit();
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   closeModal() {

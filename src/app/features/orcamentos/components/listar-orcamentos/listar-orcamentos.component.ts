@@ -4,6 +4,7 @@ import { OrcamentoService } from '../../services/orcamento.service';
 import { Observable } from 'rxjs';
 import { Orcamento } from '../../../../interfaces/orcamento';
 import { CommonModule } from '@angular/common';
+import { MessageService } from '../../../../shared/messages/services/message.service';
 
 @Component({
   selector: 'app-listar-orcamentos',
@@ -15,10 +16,18 @@ import { CommonModule } from '@angular/common';
 export class ListarOrcamentosComponent {
   orcamentos$ = new Observable<Orcamento[]>();
 
-  constructor(private orcamentoService: OrcamentoService) {}
+  constructor(
+    private orcamentoService: OrcamentoService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
-    this.getOrcamentos();
+    this.getOrcamentos().subscribe(
+      () => {},
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   getOrcamentos(): Observable<Orcamento[]> {

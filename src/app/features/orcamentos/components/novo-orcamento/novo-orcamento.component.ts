@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { OrcamentoService } from '../../services/orcamento.service';
 import { Router } from '@angular/router';
+import { MessageService } from '../../../../shared/messages/services/message.service';
 
 @Component({
   selector: 'app-novo-orcamento',
@@ -29,7 +30,8 @@ export class NovoOrcamentoComponent implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private orcamentoService: OrcamentoService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -53,10 +55,13 @@ export class NovoOrcamentoComponent implements OnInit {
   }
 
   createOrcamento(clienteId: string, veiculoId: string): void {
-    this.orcamentoService
-      .create(clienteId, veiculoId)
-      .subscribe((orcamento) => {
+    this.orcamentoService.create(clienteId, veiculoId).subscribe(
+      (orcamento) => {
         this.router.navigate(['/orcamento/', orcamento.id]);
-      });
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 }

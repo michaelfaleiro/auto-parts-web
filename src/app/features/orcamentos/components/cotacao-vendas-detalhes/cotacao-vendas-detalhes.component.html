@@ -81,8 +81,9 @@
               <td>{{ preco.prazoExpedicao }} Dia(s)</td>
               <td>{{ preco.fornecedor.nomeFantasia }}</td>
               <td>{{ preco.valorVenda | currency }}</td>
-              <td>
-                <button class="btn btn-sm btn-primary">Detalhes</button>
+              <td class="d-flex gap-1">
+                <button class="btn btn-sm btn-secondary">Publicar</button>
+                <button class="btn btn-sm btn-secondary">Orçamento</button>
               </td>
             </tr>
             } @else {

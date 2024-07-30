@@ -17,7 +17,6 @@
             [formGroup]="similarForm"
             (ngSubmit)="submit()"
             (keydown.enter)="$event.preventDefault()"
-            #formDir="ngForm"
           >
             <div class="mb-3">
               <label for="sku">Sku</label>
@@ -30,14 +29,16 @@
                 autocomplete="off"
                 #skuInput
               />
-              @if(formDir.submitted) {
-              <small
-                class="text-danger"
-                >{{ similarForm.get('sku')?.errors?.['required']
-                    ? 'Informe o Sku'
-                    : '' }}</small
+              <div
+                *ngIf="
+                  similarForm.get('sku')?.invalid &&
+                  similarForm.get('sku')?.touched
+                "
               >
-              }
+                <div *ngIf="similarForm.get('sku')?.errors?.['required']">
+                  <small class="text-danger">Informe o sku</small>
+                </div>
+              </div>
             </div>
             <div class="mb-3">
               <label for="fabricante" class="form-label">Fabricante</label>
@@ -49,20 +50,34 @@
                 formControlName="fabricante"
                 autocomplete="off"
               />
-              @if(formDir.submitted) {
-              <small
-                class="text-danger"
-                >{{ similarForm.get('fabricante')?.errors?.['required']
-                    ? 'Informe o fabricante'
-                    : '' }}</small
+              <div
+                *ngIf="
+                  similarForm.get('fabricante')?.invalid &&
+                  similarForm.get('fabricante')?.touched
+                "
               >
-              }
+                <div
+                  *ngIf="similarForm.get('fabricante')?.errors?.['required']"
+                >
+                  <small class="text-danger">Informe o Fabricante</small>
+                </div>
+              </div>
             </div>
             <div class="mb-3">
               <select class="form-select" formControlName="tipo">
                 <option value="1">Similar</option>
                 <option value="2">Mesmo Produto</option>
               </select>
+              <div
+                *ngIf="
+                  similarForm.get('tipo')?.invalid &&
+                  similarForm.get('tipo')?.touched
+                "
+              >
+                <div *ngIf="similarForm.get('tipo')?.errors?.['required']">
+                  <small class="text-danger">Selecione o Tipo</small>
+                </div>
+              </div>
             </div>
             <div class="d-flex gap-2 justify-content-center">
               <button type="submit" class="btn btn-sm btn-secondary">

@@ -1,3 +1,17 @@
+<app-modal-preco-fornecedor
+  *ngIf="isModalPrecoFornecedorVisible"
+  (showModalPrecoFornecedor)="showModalPrecoFornecedor(itemId)"
+  [itemId]="itemId"
+  [precoItemId]="precoItemId"
+  (updateCotacao)="getPrecoItemCotacao(this.itemId)"
+/>
+
+<app-modal-codigo-similar
+  *ngIf="isModalCodigoSimilarShow"
+  [itemId]="itemId"
+  (showModalCodigoSimilar)="showCodigoSimilar(itemId)"
+/>
+
 <div class="container-fluid bg-dark-subtle h-100 d-flex flex-column">
   <div>
     <h5 class="text-center">Cotação</h5>
@@ -46,7 +60,7 @@
       </div>
       <div class="col-3">
         <p>
-          Status : <span>{{ cotacao.status }}</span>
+          Status : <span>{{ cotacao.status | titlecase }}</span>
         </p>
         <p>
           Abertura :
@@ -80,9 +94,24 @@
               <td>{{ item.sku | uppercase }}</td>
               <td>{{ item.nome | titlecase }}</td>
               <td class="d-flex gap-1">
-                <button class="btn btn-sm btn-secondary">Similar</button>
-                <button class="btn btn-sm btn-secondary">Preço</button>
-                <button class="btn btn-sm btn-secondary">Detalhes</button>
+                <button
+                  (click)="showCodigoSimilar(item.id)"
+                  class="btn btn-sm btn-secondary"
+                >
+                  Similar
+                </button>
+                <button
+                  (click)="showModalPrecoFornecedor(item.id)"
+                  class="btn btn-sm btn-secondary"
+                >
+                  Preço
+                </button>
+                <button
+                  (click)="getPrecoItemCotacao(item.id)"
+                  class="btn btn-sm btn-secondary"
+                >
+                  Detalhes
+                </button>
               </td>
             </tr>
           </tbody>
@@ -103,19 +132,37 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>123456</td>
-              <td>Delphi</td>
-              <td>1 dia</td>
-              <td>Delphi</td>
-              <td>R$ 100,00</td>
-              <td>R$ 150,00</td>
+            @if (itemCotacao$ | async ){
+            <tr *ngFor="let item of (itemCotacao$ | async)?.precoItemCotacoes">
+              <td>{{ item.quantidadeAtendida }}</td>
+              <td>{{ item.sku | titlecase }}</td>
+              <td>{{ item.fabricante | titlecase }}</td>
+              <td>{{ item.prazoExpedicao }}</td>
+              <td>{{ item.fornecedor.nomeFantasia | titlecase }}</td>
+              <td>{{ item.valorCusto | currency }}</td>
+              <td>{{ item.valorVenda | currency }}</td>
               <td class="d-flex gap-1">
+                <button
+                  (click)="removerPrecoItemCotacao(item.itemId, item.id)"
+                  class="btn btn-sm btn-danger"
+                >
+                  Excluir
+                </button>
+                <button
+                  (click)="editarItemCotacao(item.itemId, item.id)"
+                  class="btn btn-sm btn-warning"
+                >
+                  Editar
+                </button>
                 <button class="btn btn-sm btn-secondary">Cadastrar</button>
                 <button class="btn btn-sm btn-secondary">Detalhes</button>
               </td>
             </tr>
+            } @else {
+            <tr>
+              <td colspan="8" class="text-center">Escolha um item</td>
+            </tr>
+            }
           </tbody>
         </table>
       </div>

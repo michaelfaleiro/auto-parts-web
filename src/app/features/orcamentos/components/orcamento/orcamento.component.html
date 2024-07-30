@@ -105,14 +105,36 @@
                 formControlName="quantidade"
                 #quantidadeInput
               />
+              <div
+                *ngIf="
+                  itemForm.get('quantidade')?.invalid &&
+                  itemForm.get('quantidade')?.touched
+                "
+              >
+                <small class="text-danger">Maior que 0</small>
+              </div>
             </div>
             <div class="col-2">
               <label for="sku" class="form-label">SKU</label>
               <input type="text" class="form-control" formControlName="sku" />
+              <div
+                *ngIf="
+                  itemForm.get('sku')?.invalid && itemForm.get('sku')?.touched
+                "
+              >
+                <small class="text-danger">Informe o sku</small>
+              </div>
             </div>
             <div class="flex-grow-1">
               <label for="nome" class="form-label">Nome</label>
               <input type="text" class="form-control" formControlName="nome" />
+              <div
+                *ngIf="
+                  itemForm.get('nome')?.invalid && itemForm.get('nome')?.touched
+                "
+              >
+                <small class="text-danger">Informe o nome</small>
+              </div>
             </div>
             <div class="col-2">
               <label for="fabricante" class="form-label">Fabricante</label>
@@ -121,6 +143,14 @@
                 class="form-control"
                 formControlName="fabricante"
               />
+              <div
+                *ngIf="
+                  itemForm.get('fabricante')?.invalid &&
+                  itemForm.get('fabricante')?.touched
+                "
+              >
+                <small class="text-danger">Informe o fabricante</small>
+              </div>
             </div>
             <div class="col-1">
               <label for="desconto" class="form-label">Desconto</label>
@@ -140,10 +170,31 @@
                 currencyMask
                 [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
               />
+              <div
+                *ngIf="
+                  itemForm.get('valorUnitario')?.invalid &&
+                  itemForm.get('valorUnitario')?.touched
+                "
+              >
+                <small
+                  *ngIf="itemForm.get('valorUnitario')?.errors?.['required']"
+                  class="text-danger"
+                  >Informe o valor</small
+                >
+              </div>
             </div>
             <div class="d-flex gap-1 justify-content-center align-items-end">
-              <button class="btn btn-sm btn-secondary">Gravar</button>
-              <button (click)="limparForm()" class="btn btn-sm btn-danger">
+              <button
+                [disabled]="itemForm.invalid"
+                class="btn btn-sm btn-secondary"
+              >
+                Gravar
+              </button>
+              <button
+                type="button"
+                (click)="limparForm()"
+                class="btn btn-sm btn-danger"
+              >
                 Cancelar
               </button>
             </div>
@@ -230,23 +281,53 @@
           <div class="d-flex flex-column gap-2 p-1">
             <div class="d-flex gap-2">
               <span>Pecas</span>
-              <span class="form-control text-end">R$ 1000,00</span>
+              <span class="form-control text-end">{{
+                (orcamento$ | async)?.valorTotal | currency
+              }}</span>
             </div>
             <div class="d-flex gap-2">
-              <span>Cupom</span>
-              <span class="form-control text-end">R$ 1000,00</span>
+              <label for="valorCupom">Cupom</label>
+              <input
+                type="tel"
+                id="valorCupom"
+                class="form-control"
+                [(ngModel)]="valorCupom"
+                currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+              />
             </div>
             <div class="d-flex gap-2">
-              <span>Desconto</span>
-              <span class="form-control text-end">R$ 1000,00</span>
+              <label for="descontoPecas">Desconto</label>
+              <input
+                type="tel"
+                id="descontoPecas"
+                class="form-control"
+                [(ngModel)]="descontoPecas"
+                currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+              />
             </div>
             <div class="d-flex gap-2">
-              <span>Frete</span>
-              <span class="form-control text-end">R$ 1000,00</span>
+              <label for="valorFrete">Frete</label>
+              <input
+                type="tel"
+                id="valorFrete"
+                class="form-control"
+                [(ngModel)]="valorFrete"
+                currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+              />
             </div>
             <div class="d-flex gap-2">
               <span>Total</span>
-              <span class="form-control text-end">R$ 1000,00</span>
+              <span class="form-control text-end">{{
+                valorTotalOrcamento(
+                  (orcamento$ | async)?.valorTotal!,
+                  valorCupom,
+                  descontoPecas,
+                  valorFrete
+                ) | currency
+              }}</span>
             </div>
             <div>
               <label class="form-label">Observações</label>

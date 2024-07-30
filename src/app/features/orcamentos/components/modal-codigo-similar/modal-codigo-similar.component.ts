@@ -39,7 +39,7 @@ export class ModalCodigoSimilarComponent {
   similarForm = new FormGroup({
     sku: new FormControl('', [Validators.required]),
     fabricante: new FormControl('', [Validators.required]),
-    tipo: new FormControl(1),
+    tipo: new FormControl(1, [Validators.required]),
   });
 
   constructor(
@@ -62,6 +62,8 @@ export class ModalCodigoSimilarComponent {
       } else {
         this.adicionarCodigoSimilar();
       }
+    } else {
+      this.messageService.error('Preencha todos os campos obrigatórios!');
     }
   }
 
@@ -79,11 +81,16 @@ export class ModalCodigoSimilarComponent {
       tipo: Number(this.similarForm.get('tipo')?.value!),
     };
 
-    this.cotacaoService.adicionarCodigoSimilar(codigoSimilar).subscribe(() => {
-      this.getSimilar();
-      this.messageService.success('Código similar adicionado com sucesso!');
-      this.limparForm();
-    });
+    this.cotacaoService.adicionarCodigoSimilar(codigoSimilar).subscribe(
+      () => {
+        this.getSimilar();
+        this.messageService.success('Código similar adicionado com sucesso!');
+        this.limparForm();
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   updateCodigoSimilar(codigoSimilarId: string) {
@@ -96,18 +103,28 @@ export class ModalCodigoSimilarComponent {
 
     this.cotacaoService
       .updateCodigoSimilare(codigoSimilarId, codigoSimilar)
-      .subscribe(() => {
-        this.getSimilar();
-        this.messageService.success('Código similar atualizado com sucesso!');
-        this.limparForm();
-      });
+      .subscribe(
+        () => {
+          this.getSimilar();
+          this.messageService.success('Código similar atualizado com sucesso!');
+          this.limparForm();
+        },
+        (error) => {
+          this.messageService.error(error.error.errors[0]);
+        }
+      );
   }
 
   removeCodigoSimilar(id: string) {
-    this.cotacaoService.removerCodigoSimilar(id).subscribe(() => {
-      this.getSimilar();
-      this.messageService.success('Código similar removido com sucesso!');
-    });
+    this.cotacaoService.removerCodigoSimilar(id).subscribe(
+      () => {
+        this.getSimilar();
+        this.messageService.success('Código similar removido com sucesso!');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   editarCodigoSimilar(codigoSimilar: CodigoSimilar) {

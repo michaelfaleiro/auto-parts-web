@@ -8,6 +8,7 @@ import { ModalIncluirItemCotacaoComponent } from '../modal-incluir-item-cotacao/
 import { ItemCotacao } from '../../../../interfaces/itemCotacao';
 import { RemoverItemCotacao } from '../../../../types/removerItemCotacao';
 import { ModalCodigoSimilarComponent } from '../modal-codigo-similar/modal-codigo-similar.component';
+import { MessageService } from '../../../../shared/messages/services/message.service';
 
 @Component({
   selector: 'app-cotacao-vendas-detalhes',
@@ -29,7 +30,10 @@ export class CotacaoVendasDetalhesComponent {
   itemCotacao$ = new Observable<ItemCotacao>();
   itemId = '';
 
-  constructor(private cotacaoService: CotacaoService) {}
+  constructor(
+    private cotacaoService: CotacaoService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.getCotacao();
@@ -44,9 +48,15 @@ export class CotacaoVendasDetalhesComponent {
       cotacaoId: this.cotacaoId,
       itemId: itemId,
     };
-    this.cotacaoService.removerItem(item).subscribe(() => {
-      this.getCotacao();
-    });
+    this.cotacaoService.removerItem(item).subscribe(
+      () => {
+        this.getCotacao();
+        this.messageService.success('Item removido com sucesso');
+      },
+      (error) => {
+        this.messageService.error(error.error.errors[0]);
+      }
+    );
   }
 
   listarPrecoItemCotacao(itemId: string) {

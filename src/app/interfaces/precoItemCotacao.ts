@@ -2,6 +2,7 @@ import { Fornecedor } from './fornecedor';
 
 export interface PrecoItemCotacao {
   id: string;
+  itemId: string;
   quantidadeAtendida: number;
   sku: string;
   fabricante: string;

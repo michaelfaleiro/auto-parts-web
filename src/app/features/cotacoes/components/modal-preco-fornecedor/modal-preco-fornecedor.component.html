@@ -1,0 +1,212 @@
+<div class="modal" style="display: block">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark-subtle">
+      <div class="modal-header">
+        <h5 class="modal-title">Preço do Fornecedor</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="closeModal()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="d-flex flex-column"
+          [formGroup]="precoForm"
+          (keydown.enter)="$event.preventDefault()"
+          (ngSubmit)="submit()"
+        >
+          <div class="mb-3">
+            <label for="fornecedor" class="form-label">Fornecedor</label>
+            <select
+              name=""
+              id=""
+              class="form-select"
+              formControlName="fornecedorId"
+            >
+              <option
+                *ngFor="let fornecedor of fornecedores$ | async"
+                [value]="fornecedor.id"
+              >
+                {{ fornecedor.nomeFantasia }}
+              </option>
+            </select>
+            <div
+              *ngIf="
+                precoForm.get('fornecedorId')?.invalid &&
+                precoForm.get('fornecedorId')?.touched
+              "
+            >
+              <small
+                *ngIf="precoForm.get('fornecedorId')?.errors?.['required']"
+                class="text-danger"
+                >Escolha o Fornecedor</small
+              >
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <div class="col-2">
+              <label for="quantidade" class="form-label">Quantidade</label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="quantidadeAtendida"
+              />
+              <div
+                *ngIf="
+                  precoForm.get('quantidadeAtendida')?.invalid &&
+                  precoForm.get('quantidadeAtendida')?.touched
+                "
+              >
+                <small
+                  *ngIf="precoForm.get('quantidadeAtendida')?.errors?.['required']"
+                  class="text-danger"
+                  >Informe a Quantidade</small
+                >
+                <small
+                  *ngIf="precoForm.get('quantidadeAtendida')?.errors?.['minlength']"
+                  class="text-danger"
+                  >Deve ser maior que 0</small
+                >
+              </div>
+            </div>
+            <div class="flex-grow-1">
+              <label for="sku" class="form-label">SKU</label>
+              <input type="text" class="form-control" formControlName="sku" />
+              <div
+                *ngIf="
+                  precoForm.get('sku')?.invalid && precoForm.get('sku')?.touched
+                "
+              >
+                <small
+                  *ngIf="precoForm.get('sku')?.errors?.['required']"
+                  class="text-danger"
+                  >Informe o Sku</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="fabricante" class="form-label">Fabricante</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fabricante"
+            />
+            <div
+              *ngIf="
+                precoForm.get('fabricante')?.invalid &&
+                precoForm.get('fabricante')?.touched
+              "
+            >
+              <small
+                *ngIf="precoForm.get('fabricante')?.errors?.['required']"
+                class="text-danger"
+                >Informe o Fabricante</small
+              >
+            </div>
+          </div>
+          <div class="mb-3 d-flex gap-2">
+            <div>
+              <label for="valorCusto" class="form-label">Valor Custo</label>
+              <input
+                type="tel"
+                class="form-control"
+                formControlName="valorCusto"
+                currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+              />
+              <div
+                *ngIf="
+                  precoForm.get('valorCusto')?.invalid &&
+                  precoForm.get('valorCusto')?.touched
+                "
+              >
+                <small
+                  *ngIf="precoForm.get('valorCusto')?.errors?.['required']"
+                  class="text-danger"
+                  >Informe o Custo</small
+                >
+                <small
+                  *ngIf="precoForm.get('valorCusto')?.errors?.['minlength']"
+                  class="text-danger"
+                  >Não pode ser menor do que 0,01</small
+                >
+              </div>
+            </div>
+            <div>
+              <label for="valorVenda" class="form-label">Valor Venda</label>
+              <input
+                type="tel"
+                class="form-control"
+                formControlName="valorVenda"
+                currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+              />
+              <div
+                *ngIf="
+                  precoForm.get('valorVenda')?.invalid &&
+                  precoForm.get('valorVenda')?.touched
+                "
+              >
+                <small
+                  *ngIf="precoForm.get('valorVenda')?.errors?.['required']"
+                  class="text-danger"
+                  >Informe o Valor de Venda</small
+                >
+                <small
+                  *ngIf="precoForm.get('valorVenda')?.errors?.['minlength']"
+                  class="text-danger"
+                  >Não pode ser menor do que 0,01</small
+                >
+              </div>
+            </div>
+            <div>
+              <label for="prazoExpedicao" class="form-label"
+                >Prazo Expedição</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                formControlName="prazoExpedicao"
+              />
+              <div
+                *ngIf="
+                  precoForm.get('prazoExpedicao')?.invalid &&
+                  precoForm.get('prazoExpedicao')?.touched
+                "
+              >
+                <small
+                  *ngIf="precoForm.get('prazoExpedicao')?.errors?.['required']"
+                  class="text-danger"
+                  >Informe o Prazo de Expedição</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="observacao" class="form-label">Observação</label>
+            <textarea
+              class="form-control"
+              formControlName="observacao"
+            ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              (click)="closeModal()"
+            >
+              Fechar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
